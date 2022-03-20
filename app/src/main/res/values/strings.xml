@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">Stocks</string>
+    <string name="app_name">SimStox</string>
+    <string name="input_api_key_label">Input API Key</string>
+    <string name="input_api_key_box">Input API Key</string>
+    <string name="output_api_key_label">Output API Key</string>
+    <string name="output_api_key_box">Output API Key</string>
+    <string name="confirm_api_keys_button">Confirm API Keys</string>
 </resources>
