@@ -1,4 +1,4 @@
-package com.example.stocks;
+package org.kuga.stox;
 
 import androidx.appcompat.app.AppCompatActivity;
 

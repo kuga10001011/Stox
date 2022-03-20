@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.stocks">
+    package="org.kuga.stox">
 
     <application
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Stocks">
         <activity
-            android:name=".MainActivity"
+            android:name="org.kuga.stox.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.example.stocks;
+package org.kuga.stox;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.stocks", appContext.getPackageName());
+        assertEquals("org.kuga.stox", appContext.getPackageName());
     }
 }
