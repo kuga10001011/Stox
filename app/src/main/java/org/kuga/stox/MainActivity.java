@@ -23,11 +23,6 @@ public class MainActivity extends AppCompatActivity {
         String outputAPIKey = outputAPIKeyBox.getText().toString();
         intent.putExtra("INPUT_API_KEY", inputAPIKey);
         intent.putExtra("OUTPUT_API_KEY", outputAPIKey);
-        if (inputAPIKey.length() > 0 && outputAPIKey.length() > 0) {
-            startActivity(intent);
-        }
-        else {
-            //open popup window to handle invalid keys
-        }
+        startActivity(intent);
     }
 }

@@ -5,4 +5,10 @@
     <string name="output_api_key_label">Output API Key</string>
     <string name="output_api_key_box">Output API Key</string>
     <string name="confirm_api_keys_button">Confirm API Keys</string>
+    <string name="trade_type">Trade Type: </string>
+    <string name="buy">Buy</string>
+    <string name="sell">Sell</string>
+    <string name="loading">loading…</string>
+    <string name="price_label">Price: </string>
+    <string name="quantity_label">Quantity: </string>
 </resources>
