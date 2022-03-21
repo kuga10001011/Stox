@@ -3,25 +3,45 @@ package org.kuga.stox;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class TradingCardAdapter extends RecyclerView.Adapter<TradingCardAdapter.ViewHolder> {
-    private ArrayList<String> dataSet;
+    private ArrayList<Trade> dataSet;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ConstraintLayout tradingCardBase;
+
         public ViewHolder(View view) {
             super(view);
             tradingCardBase = view.findViewById(R.id.tradingCardBase);
         }
+
+        public TextView getStockNameView() {
+            return tradingCardBase.findViewById(R.id.stockName);
+        }
+
+        public TextView getTradeActionView() {
+            return tradingCardBase.findViewById(R.id.tradeAction);
+        }
+
+        public TextView getTradeQuantityView() {
+            return tradingCardBase.findViewById(R.id.tradeQuantity);
+        }
+
+        public TextView getPriceView() {
+            return tradingCardBase.findViewById(R.id.price);
+        }
     }
 
-    public TradingCardAdapter(ArrayList<String> dataSet) {
+    public TradingCardAdapter(ArrayList<Trade> dataSet) {
         this.dataSet = dataSet;
     }
 
@@ -34,7 +54,11 @@ public class TradingCardAdapter extends RecyclerView.Adapter<TradingCardAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
+        holder.getStockNameView().setText(dataSet.get(position).getName());
+        holder.getTradeActionView().setText(dataSet.get(position).getAction());
+        DecimalFormat decimalFormatter = new DecimalFormat("#0.00");
+        holder.getTradeQuantityView().setText(decimalFormatter.format(dataSet.get(position).getQuantity()));
+        holder.getPriceView().setText(decimalFormatter.format(dataSet.get(position).getPrice()));
     }
 
     @Override

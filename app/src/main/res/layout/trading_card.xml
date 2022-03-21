@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tradingCardBase"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:layout_gravity="center">
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,15 +23,23 @@
             android:gravity="center">
 
             <TextView
-                android:id="@+id/tradeType"
+                android:id="@+id/stockName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/trade_type" />
+                android:paddingStart="10dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="5dp"
+                android:text="@string/loading" />
 
             <TextView
                 android:id="@+id/tradeAction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="5dp"
                 android:text="@string/loading" />
         </TableRow>
 
@@ -42,12 +52,20 @@
                 android:id="@+id/price_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="5dp"
                 android:text="@string/price_label" />
 
             <TextView
                 android:id="@+id/price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="5dp"
                 android:text="@string/loading" />
 
         </TableRow>
@@ -58,15 +76,23 @@
             android:gravity="center">
 
             <TextView
-                android:id="@+id/quantity_label"
+                android:id="@+id/quantityLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="10dp"
                 android:text="@string/quantity_label" />
 
             <TextView
                 android:id="@+id/tradeQuantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
                 android:text="@string/loading" />
         </TableRow>
 
