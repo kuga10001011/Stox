@@ -7,23 +7,32 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TradingScreen extends AppCompatActivity {
 
     private TradingCardAdapter tradingCardAdapter;
     private RecyclerView tradingCardContainer;
     private RecyclerView.LayoutManager tradingCardContainerLayoutManager;
-    private ArrayList<Trade> dataSet = new ArrayList<>();
+    private final ArrayList<Trade> dataSet = new ArrayList<>();
+    private final HashMap<Stock, Double> heldStocks = new HashMap<>();
+    private double workingCapital;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trading_screen);
         tradingCardAdapter = new TradingCardAdapter(dataSet);
-        tradingCardContainer = (RecyclerView) findViewById(R.id.tradingCardContainer);
+        tradingCardContainer = findViewById(R.id.tradingCardContainer);
         tradingCardContainer.setAdapter(tradingCardAdapter);
         tradingCardContainerLayoutManager = new LinearLayoutManager(this);
         tradingCardContainer.setLayoutManager(tradingCardContainerLayoutManager);
+
+        workingCapital = Double.parseDouble(getIntent().getStringExtra("WORKING_CAPITAL"));
+
+        ArrayList<String> stockInput = new ArrayList<>();
+        stockInput.add("AMD");
+        generateStocks(stockInput);
         updateData();
     }
 
@@ -34,4 +43,9 @@ public class TradingScreen extends AppCompatActivity {
         dataSet.add(testTrade1);
     }
 
+    protected void generateStocks(ArrayList<String> stockInput) {
+        for (String name : stockInput) {
+            heldStocks.put(new Stock(name), 0.0);
+        }
+    }
 }

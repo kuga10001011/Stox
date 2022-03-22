@@ -71,6 +71,13 @@
             android:minHeight="48dp"
             android:textColorHint="#757575" />
 
+        <EditText
+            android:id="@+id/workingCapitalBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="number" />
+
         <Button
             android:id="@+id/confirm_api_keys_button"
             android:layout_width="wrap_content"

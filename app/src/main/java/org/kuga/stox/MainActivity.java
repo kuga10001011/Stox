@@ -19,10 +19,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TradingScreen.class);
         EditText inputAPIKeyBox = findViewById(R.id.input_api_key_edit_text);
         EditText outputAPIKeyBox = findViewById(R.id.output_api_key_edit_text);
+        EditText workingCapitalBox = findViewById(R.id.workingCapitalBox);
         String inputAPIKey = inputAPIKeyBox.getText().toString();
         String outputAPIKey = outputAPIKeyBox.getText().toString();
+        String workingCapital = workingCapitalBox.getText().toString();
         intent.putExtra("INPUT_API_KEY", inputAPIKey);
         intent.putExtra("OUTPUT_API_KEY", outputAPIKey);
+        intent.putExtra("WORKING_CAPITAL", workingCapital);
         startActivity(intent);
     }
 }
