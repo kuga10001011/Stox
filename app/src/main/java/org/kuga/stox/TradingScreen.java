@@ -5,9 +5,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TimeZone;
+
+import io.polygon.kotlin.sdk.rest.AggregateDTO;
+import io.polygon.kotlin.sdk.rest.AggregatesDTO;
+import io.polygon.kotlin.sdk.rest.AggregatesParameters;
+import io.polygon.kotlin.sdk.rest.PolygonRestClient;
 
 public class TradingScreen extends AppCompatActivity {
 
@@ -17,6 +26,10 @@ public class TradingScreen extends AppCompatActivity {
     private final ArrayList<Trade> dataSet = new ArrayList<>();
     private final HashMap<Stock, Double> heldStocks = new HashMap<>();
     private double workingCapital;
+    private String incomingAPIKey;
+
+    // Testing Code
+    private PolygonRestClient incomingClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,18 +42,79 @@ public class TradingScreen extends AppCompatActivity {
         tradingCardContainer.setLayoutManager(tradingCardContainerLayoutManager);
 
         workingCapital = Double.parseDouble(getIntent().getStringExtra("WORKING_CAPITAL"));
+        ((TextView) findViewById(R.id.workingCapital)).setText(getIntent().getStringExtra("WORKING_CAPITAL"));
+        incomingAPIKey = getIntent().getStringExtra("INPUT_API_KEY");
+
+        // Testing Code
+        incomingClient = new PolygonRestClient(incomingAPIKey);
 
         ArrayList<String> stockInput = new ArrayList<>();
         stockInput.add("AMD");
         generateStocks(stockInput);
-        updateData();
+
+        for (Stock stock : heldStocks.keySet()) {
+            queryPolygon(stock);
+            updateData(stock);
+        }
+
     }
 
-    protected void updateData() {
-        Trade testTrade0 = new Trade(new Stock("testTrade0"), "SELL", 23431.123423, 0.772342);
-        Trade testTrade1 = new Trade(new Stock("testTrade1"), "BUY", 4251.2312, 0.1324);
-        dataSet.add(testTrade0);
-        dataSet.add(testTrade1);
+    // Testing Code
+    protected void queryPolygon(Stock target) {
+        AggregatesDTO agg = incomingClient.getAggregatesBlocking(new AggregatesParameters("AMD", 1, "minute", "2022-03-21", "2022-03-21", false, 50000));
+        Calendar currentDate = Calendar.getInstance(TimeZone.getTimeZone("New York"));
+        for (int i = 0; i < agg.getResults().size(); i++) {
+            AggregateDTO currentAgg = agg.getResults().get(i);
+            currentDate.setTimeInMillis(currentAgg.getTimestampMillis());
+            currentDate.set(Calendar.SECOND, 0);
+            currentDate.set(Calendar.MILLISECOND, 0);
+            long keyLong = currentDate.getTimeInMillis();
+            target.setOpenPrice(keyLong, currentAgg.getOpen());
+        }
+    }
+
+    protected void updateData(Stock target) {
+        Calendar currentDate = Calendar.getInstance(TimeZone.getTimeZone("New York"));
+        currentDate.clear();
+        currentDate.set(2022, 2, 21, 13, 30);
+        long startLong = currentDate.getTimeInMillis();
+        Calendar endDate = Calendar.getInstance(TimeZone.getTimeZone("New York"));
+        endDate.clear();
+        endDate.set(2022, 2, 21, 20, 0);
+        long endLong = endDate.getTimeInMillis();
+        while (startLong < endLong) {
+            int decision = (int) Math.round(Math.random());
+            if (decision == 1) {
+                buyStock(target, startLong);
+            } else {
+                sellStock(target, startLong);
+            }
+            startLong += 1000 * 60 * 60;
+        }
+    }
+
+    protected void buyStock(Stock target, long time) {
+        DecimalFormat decimalFormat = new DecimalFormat(".00");
+        double qty = Double.parseDouble(decimalFormat.format(workingCapital / target.getOpenPrice(time)));
+        double price = target.getOpenPrice(time);
+        if (workingCapital > price * qty) {
+            heldStocks.put(target, heldStocks.getOrDefault(target, 0.0) + qty);
+            Trade trade = new Trade(target, "BUY", price, qty);
+            workingCapital -= price * qty;
+            dataSet.add(trade);
+            ((TextView) findViewById(R.id.workingCapital)).setText(String.valueOf(workingCapital));
+        }
+    }
+
+    protected void sellStock(Stock target, long time) {
+        DecimalFormat decimalFormat = new DecimalFormat(".00");
+        double qty = heldStocks.getOrDefault(target, 0.0);
+        double price = target.getOpenPrice(time);
+        Trade trade = new Trade(target, "SELL", price, qty);
+        workingCapital += Double.parseDouble(decimalFormat.format(price * qty));
+        dataSet.add(trade);
+        ((TextView) findViewById(R.id.workingCapital)).setText(String.valueOf(workingCapital));
+
     }
 
     protected void generateStocks(ArrayList<String> stockInput) {

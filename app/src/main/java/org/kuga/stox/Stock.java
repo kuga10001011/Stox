@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Stock {
     private final String name;
-    private final HashMap<Calendar, Double> openPriceHistory;
+    private final HashMap<Long, Double> openPriceHistory;
     private Trade acquisitionTrade;
 
     public Stock(String name) {
@@ -23,7 +23,11 @@ public class Stock {
         return name;
     }
 
-    public Double getOpenPrice(Calendar time) {
+    public void setOpenPrice(long time, double price) {
+        openPriceHistory.put(time, price);
+    }
+
+    public Double getOpenPrice(long time) {
         return openPriceHistory.getOrDefault(time, -1.0);
     }
 
