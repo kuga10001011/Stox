@@ -12,6 +12,7 @@ public class Trade {
         this.action = action;
         this.price = price;
         this.quantity = quantity;
+        this.stock.setAcquisitionTrade(this);
     }
 
     public String getName() {

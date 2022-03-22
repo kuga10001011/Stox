@@ -31,6 +31,10 @@ public class Stock {
         return this.acquisitionTrade;
     }
 
+    public void setAcquisitionTrade(Trade acquisitionTrade) {
+        this.acquisitionTrade = acquisitionTrade;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

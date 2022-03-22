@@ -37,6 +37,10 @@ public class TradingScreen extends AppCompatActivity {
     }
 
     protected void updateData() {
+        Trade testTrade0 = new Trade(new Stock("testTrade0"), "SELL", 23431.123423, 0.772342);
+        Trade testTrade1 = new Trade(new Stock("testTrade1"), "BUY", 4251.2312, 0.1324);
+        dataSet.add(testTrade0);
+        dataSet.add(testTrade1);
     }
 
     protected void generateStocks(ArrayList<String> stockInput) {
