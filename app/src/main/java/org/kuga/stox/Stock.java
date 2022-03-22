@@ -7,16 +7,16 @@ import java.util.Objects;
 public class Stock {
     private final String name;
     private final HashMap<Calendar, Double> openPriceHistory;
-    private double purchasePrice;
+    private Trade acquisitionTrade;
 
     public Stock(String name) {
         this.name = name;
         this.openPriceHistory = new HashMap<>();
     }
 
-    public Stock(String name, double purchasePrice) {
+    public Stock(String name, Trade purchase) {
         this(name);
-        this.purchasePrice = purchasePrice;
+        this.acquisitionTrade = purchase;
     }
 
     public String getName() {
@@ -27,8 +27,8 @@ public class Stock {
         return openPriceHistory.getOrDefault(time, -1.0);
     }
 
-    public double getPurchasePrice() {
-        return purchasePrice;
+    public Trade getAcquisitionTrade() {
+        return this.acquisitionTrade;
     }
 
     @Override

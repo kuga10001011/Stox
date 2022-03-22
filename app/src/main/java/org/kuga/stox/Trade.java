@@ -2,20 +2,20 @@ package org.kuga.stox;
 
 public class Trade {
 
-    private String name;
+    private Stock stock;
     private String action;
     private double price;
     private double quantity;
 
-    public Trade(String name, String action, double price, double quantity) {
-        this.name = name;
+    public Trade(Stock stock, String action, double price, double quantity) {
+        this.stock = stock;
         this.action = action;
         this.price = price;
         this.quantity = quantity;
     }
 
     public String getName() {
-        return name;
+        return stock.getName();
     }
 
     public String getAction() {
