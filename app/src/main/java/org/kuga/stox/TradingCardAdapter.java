@@ -1,5 +1,6 @@
 package org.kuga.stox;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class TradingCardAdapter extends RecyclerView.Adapter<TradingCardAdapter.ViewHolder> {
     private ArrayList<Trade> dataSet;
@@ -39,6 +39,10 @@ public class TradingCardAdapter extends RecyclerView.Adapter<TradingCardAdapter.
         public TextView getPriceView() {
             return tradingCardBase.findViewById(R.id.price);
         }
+
+        public ConstraintLayout getTradingCardBase() {
+            return tradingCardBase;
+        }
     }
 
     public TradingCardAdapter(ArrayList<Trade> dataSet) {
@@ -56,6 +60,12 @@ public class TradingCardAdapter extends RecyclerView.Adapter<TradingCardAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.getStockNameView().setText(dataSet.get(position).getName());
         holder.getTradeActionView().setText(dataSet.get(position).getAction());
+        if (dataSet.get(position).getAction().equals("SELL")) {
+            holder.getTradingCardBase().setBackgroundColor(Color.parseColor("#FF4D000B"));
+        }
+        else {
+            holder.getTradingCardBase().setBackgroundColor(Color.parseColor("#FF003700"));
+        }
         DecimalFormat decimalFormatter = new DecimalFormat("#0.00");
         holder.getTradeQuantityView().setText(decimalFormatter.format(dataSet.get(position).getQuantity()));
         holder.getPriceView().setText(decimalFormatter.format(dataSet.get(position).getPrice()));

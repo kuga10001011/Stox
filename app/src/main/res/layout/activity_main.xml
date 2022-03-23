@@ -71,12 +71,22 @@
             android:minHeight="48dp"
             android:textColorHint="#757575" />
 
+        <TextView
+            android:id="@+id/workingCapitalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:text="@string/working_capital_label"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textStyle="bold" />
+
         <EditText
             android:id="@+id/workingCapitalBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="number" />
+            android:inputType="number"
+            android:hint="@string/working_capital_box" />
 
         <Button
             android:id="@+id/confirm_api_keys_button"

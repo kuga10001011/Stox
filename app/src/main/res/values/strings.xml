@@ -10,4 +10,6 @@
     <string name="loading">loading…</string>
     <string name="price_label">Price: </string>
     <string name="quantity_label">Quantity: </string>
+    <string name="working_capital_label">Working Capital</string>
+    <string name="working_capital_box">Working Capital</string>
 </resources>
