@@ -11,6 +11,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.TimeZone;
 
 import io.polygon.kotlin.sdk.rest.AggregateDTO;
@@ -46,7 +47,7 @@ public class TradingScreen extends AppCompatActivity {
         incomingAPIKey = getIntent().getStringExtra("INPUT_API_KEY");
 
         // Testing Code
-        incomingClient = new PolygonRestClient(incomingAPIKey);
+        /*incomingClient = new PolygonRestClient(incomingAPIKey);
 
         ArrayList<String> stockInput = new ArrayList<>();
         stockInput.add("AMD");
@@ -54,6 +55,14 @@ public class TradingScreen extends AppCompatActivity {
 
         for (Stock stock : heldStocks.keySet()) {
             queryPolygon(stock);
+            updateData(stock);
+        }*/
+
+        Random random = new Random();
+        for (int i = 0; i < 50; i++) {
+            String name = "stock" + i;
+            Stock stock = new Stock(name);
+            heldStocks.put(stock, random.nextDouble());
             updateData(stock);
         }
 
@@ -65,11 +74,15 @@ public class TradingScreen extends AppCompatActivity {
         Calendar currentDate = Calendar.getInstance(TimeZone.getTimeZone("New York"));
         for (int i = 0; i < agg.getResults().size(); i++) {
             AggregateDTO currentAgg = agg.getResults().get(i);
-            currentDate.setTimeInMillis(currentAgg.getTimestampMillis());
+            if (currentAgg.getTimestampMillis() != null) {
+                currentDate.setTimeInMillis(currentAgg.getTimestampMillis());
+            }
             currentDate.set(Calendar.SECOND, 0);
             currentDate.set(Calendar.MILLISECOND, 0);
             long keyLong = currentDate.getTimeInMillis();
-            target.setOpenPrice(keyLong, currentAgg.getOpen());
+            if (currentAgg.getOpen() != null) {
+                target.setOpenPrice(keyLong, currentAgg.getOpen());
+            }
         }
     }
 
@@ -98,7 +111,8 @@ public class TradingScreen extends AppCompatActivity {
         double qty = Double.parseDouble(decimalFormat.format(workingCapital / target.getOpenPrice(time)));
         double price = target.getOpenPrice(time);
         if (workingCapital > price * qty) {
-            heldStocks.put(target, heldStocks.getOrDefault(target, 0.0) + qty);
+            Double prevQty = heldStocks.getOrDefault(target, 0.0);
+            heldStocks.put(target, prevQty != null ? prevQty : 0.0 + qty);
             Trade trade = new Trade(target, "BUY", price, qty);
             workingCapital -= price * qty;
             dataSet.add(trade);
@@ -108,10 +122,10 @@ public class TradingScreen extends AppCompatActivity {
 
     protected void sellStock(Stock target, long time) {
         DecimalFormat decimalFormat = new DecimalFormat(".00");
-        double qty = heldStocks.getOrDefault(target, 0.0);
+        Double qty = heldStocks.getOrDefault(target, 0.0);
         double price = target.getOpenPrice(time);
-        Trade trade = new Trade(target, "SELL", price, qty);
-        workingCapital += Double.parseDouble(decimalFormat.format(price * qty));
+        Trade trade = new Trade(target, "SELL", price, qty != null ? qty : 0.0);
+        workingCapital += Double.parseDouble(decimalFormat.format(price * (qty != null ? qty : 0.0)));
         dataSet.add(trade);
         ((TextView) findViewById(R.id.workingCapital)).setText(String.valueOf(workingCapital));
 

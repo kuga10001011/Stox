@@ -2,10 +2,10 @@ package org.kuga.stox;
 
 public class Trade {
 
-    private Stock stock;
-    private String action;
-    private double price;
-    private double quantity;
+    private final Stock stock;
+    private final String action;
+    private final double price;
+    private final double quantity;
 
     public Trade(Stock stock, String action, double price, double quantity) {
         this.stock = stock;
