@@ -7,6 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import net.jacobpeterson.alpaca.AlpacaAPI;
+import net.jacobpeterson.alpaca.model.endpoint.orders.Order;
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide;
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce;
+import net.jacobpeterson.alpaca.model.properties.DataAPIType;
+import net.jacobpeterson.alpaca.model.properties.EndpointAPIType;
+import net.jacobpeterson.alpaca.rest.AlpacaClientException;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,12 +32,16 @@ public class TradingScreen extends AppCompatActivity {
     private RecyclerView tradingCardContainer;
     private RecyclerView.LayoutManager tradingCardContainerLayoutManager;
     private final ArrayList<Trade> dataSet = new ArrayList<>();
-    private final HashMap<Stock, Double> heldStocks = new HashMap<>();
+    private final HashMap<Stock, Integer> heldStocks = new HashMap<>();
     private double workingCapital;
+    private double initialCapital;
     private String incomingAPIKey;
 
     // Testing Code
     private PolygonRestClient incomingClient;
+    private boolean live = false;
+
+    private AlpacaAPI outgoingClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +54,15 @@ public class TradingScreen extends AppCompatActivity {
         tradingCardContainer.setLayoutManager(tradingCardContainerLayoutManager);
 
         workingCapital = Double.parseDouble(getIntent().getStringExtra("WORKING_CAPITAL"));
+        initialCapital = Double.parseDouble(getIntent().getStringExtra("WORKING_CAPITAL"));
         ((TextView) findViewById(R.id.workingCapital)).setText(getIntent().getStringExtra("WORKING_CAPITAL"));
         incomingAPIKey = getIntent().getStringExtra("INPUT_API_KEY");
+
+        if (live) {
+            String keyID = "";
+            String secretKey = "";
+            outgoingClient = new AlpacaAPI(keyID, secretKey, EndpointAPIType.LIVE, DataAPIType.SIP);
+        }
 
         // Testing Code
         incomingClient = new PolygonRestClient(incomingAPIKey);
@@ -84,42 +103,72 @@ public class TradingScreen extends AppCompatActivity {
         long endLong = endDate.getTimeInMillis();
         while (startLong < endLong) {
             int decision = (int) Math.round(Math.random());
-            if (decision == 1) {
+            if (decision == 1 && heldStocks.get(target) < .0001) {
                 buyStock(target, startLong);
-            } else {
+            } else if (decision == 1 && heldStocks.get(target) > .0001) {
                 sellStock(target, startLong);
             }
-            startLong += 1000 * 60 * 60;
+            startLong += 1000 * 60;
         }
+        sellStock(target, endLong);
     }
 
-    protected void buyStock(Stock target, long time) {
-        DecimalFormat decimalFormat = new DecimalFormat(".00");
-        double qty = Double.parseDouble(decimalFormat.format(workingCapital / target.getOpenPrice(time)));
+    protected boolean buyStock(Stock target, long time) {
+        int qty = (int) (workingCapital / target.getOpenPrice(time));
         double price = target.getOpenPrice(time);
         if (workingCapital > price * qty) {
-            heldStocks.put(target, heldStocks.getOrDefault(target, 0.0) + qty);
-            Trade trade = new Trade(target, "BUY", price, qty);
-            workingCapital -= price * qty;
-            dataSet.add(trade);
-            ((TextView) findViewById(R.id.workingCapital)).setText(String.valueOf(workingCapital));
+            try {
+                Order buyOrder;
+                if (live) {
+                    buyOrder = outgoingClient.orders().requestLimitOrder(target.getName(), qty, OrderSide.BUY, OrderTimeInForce.CLS, price * 1.001, false);
+                    price = Double.parseDouble(buyOrder.getAverageFillPrice());
+                } else {
+                    buyOrder = null;
+                }
+                Trade trade = new Trade(target, "BUY", price, qty, buyOrder);
+                heldStocks.put(target, heldStocks.getOrDefault(target, 0) + qty);
+                workingCapital -= price * qty;
+                dataSet.add(trade);
+                ((TextView) findViewById(R.id.workingCapital)).setText(String.valueOf(workingCapital));
+                tradingCardContainer.smoothScrollToPosition(tradingCardAdapter.getItemCount());
+                return true;
+            } catch (AlpacaClientException e) {
+                return false;
+            }
         }
+        return false;
     }
 
-    protected void sellStock(Stock target, long time) {
+    protected boolean sellStock(Stock target, long time) {
         DecimalFormat decimalFormat = new DecimalFormat(".00");
-        double qty = heldStocks.getOrDefault(target, 0.0);
-        double price = target.getOpenPrice(time);
-        Trade trade = new Trade(target, "SELL", price, qty);
-        workingCapital += Double.parseDouble(decimalFormat.format(price * qty));
-        dataSet.add(trade);
-        ((TextView) findViewById(R.id.workingCapital)).setText(String.valueOf(workingCapital));
-
+        int qty = heldStocks.getOrDefault(target, 0);
+        if (qty > 0) {
+            try {
+                double price = target.getOpenPrice(time);
+                Order sellOrder;
+                if (live) {
+                    sellOrder = outgoingClient.orders().requestLimitOrder(target.getName(), qty, OrderSide.SELL, OrderTimeInForce.CLS, price * .999, false);
+                } else {
+                    sellOrder = null;
+                }
+                heldStocks.put(target, 0);
+                Trade trade = new Trade(target, "SELL", price, qty, sellOrder);
+                workingCapital += Double.parseDouble(decimalFormat.format(price * qty));
+                dataSet.add(trade);
+                ((TextView) findViewById(R.id.workingCapital)).setText(String.valueOf(workingCapital));
+                ((TextView) findViewById(R.id.capitalGain)).setText(String.valueOf(workingCapital - initialCapital));
+                tradingCardContainer.smoothScrollToPosition(tradingCardAdapter.getItemCount());
+                return true;
+            } catch (AlpacaClientException e) {
+                return false;
+            }
+        }
+        return false;
     }
 
     protected void generateStocks(ArrayList<String> stockInput) {
         for (String name : stockInput) {
-            heldStocks.put(new Stock(name), 0.0);
+            heldStocks.put(new Stock(name), 0);
         }
     }
 }
