@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Objects;
 
+import io.polygon.kotlin.sdk.websocket.PolygonWebSocketMessage;
+
 public class Stock {
     private final String name;
     private final HashMap<Long, Double> openPriceHistory;
@@ -35,8 +37,23 @@ public class Stock {
         return this.acquisitionTrade;
     }
 
+    public Double getHeldQuantity() {
+        if (acquisitionTrade.getAction().equals("SELL")) {
+            return 0.0;
+        }
+        else {
+            return acquisitionTrade.getQuantity();
+        }
+    }
+
     public void setAcquisitionTrade(Trade acquisitionTrade) {
         this.acquisitionTrade = acquisitionTrade;
+    }
+
+    public void updatePrice(PolygonWebSocketMessage.StocksMessage.Aggregate message) {
+        if (message.getOpenPrice() != null && message.getEndTimestampMillis() != null) {
+            setOpenPrice(message.getEndTimestampMillis(), message.getOpenPrice());
+        }
     }
 
     @Override

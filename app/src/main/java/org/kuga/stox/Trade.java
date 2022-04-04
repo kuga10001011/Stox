@@ -4,8 +4,8 @@ public class Trade {
 
     private final Stock stock;
     private final String action;
-    private final double price;
-    private final double quantity;
+    private double price;
+    private double quantity;
 
     public Trade(Stock stock, String action, double price, double quantity) {
         this.stock = stock;
@@ -29,5 +29,10 @@ public class Trade {
 
     public double getQuantity() {
         return quantity;
+    }
+
+    public void updatePriceAndQuantity(double price, double quantity) {
+        this.price = price;
+        this.quantity = quantity;
     }
 }

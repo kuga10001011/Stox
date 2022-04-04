@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class TradingCardAdapter extends RecyclerView.Adapter<TradingCardAdapter.ViewHolder> {
-    private ArrayList<Trade> dataSet;
+    private final ArrayList<Trade> dataSet;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ConstraintLayout tradingCardBase;
